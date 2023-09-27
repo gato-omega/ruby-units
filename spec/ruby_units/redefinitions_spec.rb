@@ -132,11 +132,6 @@ describe 'RubyUnits::Unit#redefine!' do
           if test_redefinition_issues?
 
             # binding.pry
-            puts ""
-            puts "RubyUnits::Unit.definitions['<liter>'].scalar"
-            p RubyUnits::Unit.definitions['<liter>'].scalar
-            puts ""
-            puts ""
 
             begin
               expect(RubyUnits::Unit.new(1000.0, 'L') - RubyUnits::Unit.new(800000, 'mL')).to   eq(RubyUnits::Unit.new('200 L'))
