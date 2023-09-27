@@ -32,7 +32,7 @@ describe RubyUnits::Configuration do
 
   context 'preferred_conversion_fallback_method' do
     context 'default' do
-      it 'is :to_f to convert to Float' do
+      it 'is `:to_f` to convert to Float' do
         expect(RubyUnits.configuration.preferred_conversion_fallback_method).to eq(:to_f)
       end
       it 'makes Unit instances parse to Float when having decimals' do
@@ -41,7 +41,7 @@ describe RubyUnits::Configuration do
       end
     end
   
-    context 'is :to_d to convert to BigDecimal' do
+    context 'when set to `:to_d` converts to BigDecimal' do
       around(:each) do |example|
         RubyUnits.configure do |config|
           config.preferred_conversion_fallback_method = :to_d
