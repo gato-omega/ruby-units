@@ -297,13 +297,19 @@ Configuration options can be set like:
 ```ruby
 RubyUnits.configure do |config|
   config.separator = false
+  config.preferred_conversion_fallback_method = :to_f
 end
 ```
 
-Currently there is only one configuration you can set:
+Currently there are two configuration options you can set:
 
-1. separator (true/false): should a space be used to separate the scalar from
+1. `separator` (true/false): should a space be used to separate the scalar from
    the unit part during output.
+
+2. `preferred_conversion_fallback_method` (Symbol): the ruby method used to
+   convert from String to Numeric or otherwise non-Complex non-Integer
+   non-Rational scalars to. Defaults to `:to_f`. Another well suited option
+   could be `:to_d` for `BigDecimal`.
 
 ### NOTES
 

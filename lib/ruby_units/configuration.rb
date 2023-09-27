@@ -28,15 +28,22 @@ module RubyUnits
     # of `true` will insert a single space, and `false` will prevent adding a
     # space to the string representation of a unit.
     attr_reader :separator
+    attr_reader :preferred_conversion_fallback_method
 
     def initialize
       self.separator = true
+      self.preferred_conversion_fallback_method = :to_f
     end
 
     def separator=(value)
       raise ArgumentError, "configuration 'separator' may only be true or false" unless [true, false].include?(value)
-
       @separator = value ? ' ' : nil
     end
+
+    def preferred_conversion_fallback_method=(value)
+      raise ArgumentError, "configuration 'preferred_conversion_fallback_method' has to be a valid callable method" unless 1.respond_to?(value)
+      @preferred_conversion_fallback_method = value.to_sym
+    end
+    
   end
 end
