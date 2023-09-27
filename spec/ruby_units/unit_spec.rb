@@ -1693,13 +1693,22 @@ describe 'Unit Conversions' do
   end
 
   context 'when the unit scalar is a Float' do
-    subject(:unit) { RubyUnits::Unit.new(2.0, 'm') }
 
-    # even though the result is numerically equivalent to an Integer, we leave
-    # it alone
-    it 'preserves the scalar type' do
-      expect(unit.convert_to('mm').scalar).to be 2000.0
+    it 'transforms the scalar type to an Integer if the result is numerically equivalent to an Integer case A' do
+      unit = RubyUnits::Unit.new(2.0, 'm')
+      expect(unit.convert_to('mm').scalar).to be 2000
     end
+
+    it 'transforms the scalar type to an Integer if the result is numerically equivalent to an Integer case B' do
+      unit = RubyUnits::Unit.new(2.1, 'm')
+      expect(unit.convert_to('mm').scalar).to be 2100
+    end
+
+    it 'transforms the scalar type to an Integer if the result is numerically equivalent to an Integer case C' do
+      unit = RubyUnits::Unit.new(0.1, 'm')
+      expect(unit.convert_to('mm').scalar).to be 100
+    end
+
   end
 
   context 'when the unit scalar is Complex' do
@@ -1711,10 +1720,33 @@ describe 'Unit Conversions' do
   end
 
   context 'when the unit scalar is Rational' do
-    subject(:unit) { RubyUnits::Unit.new(2r, 'm') }
 
-    it 'preserves the scalar type' do
-      expect(unit.convert_to('mm').scalar).to eql 2000r
+    it 'transforms the scalar type to an Integer if the result is numerically equivalent to an Integer (when transformed to "smaller" units) case A' do
+      unit = RubyUnits::Unit.new(2r, 'm')
+      expect(unit.convert_to('mm').scalar).to eql 2000
+    end
+
+    it 'transforms the scalar type to an Integer if the result is numerically equivalent to an Integer (when transformed to "smaller" units) case B' do
+      unit = RubyUnits::Unit.new(1/5r, 'm')
+      expect(unit.convert_to('mm').scalar).to eql 200
+    end
+
+    it 'cannot preserve it as a Rational if the result is not numerically equivalent to an Integer (when transformed to "bigger" units) case A' do
+      unit = RubyUnits::Unit.new(7/6r, 'm')
+      expect(unit.convert_to('km').scalar).to eql 0.0011666666666666668
+      expect(unit.convert_to('km').scalar).to eq 7/6000r
+      # "Reconvert sanity check"
+      expect(unit.convert_to('km').scalar * 1000).to eql 1.1666666666666668
+      expect(unit.convert_to('km').scalar * 1000).to eq 7/6r
+    end
+
+    it 'cannot preserve it as a Rational if the result is not numerically equivalent to an Integer (when transformed to "bigger" units) case B' do
+      unit = RubyUnits::Unit.new(5/6r, 'm')
+      expect(unit.convert_to('km').scalar).to eql 0.0008333333333333334
+      expect(unit.convert_to('km').scalar).to eq 5/6000r
+      # "Reconvert sanity check"
+      expect(unit.convert_to('km').scalar * 1000).to eql 0.8333333333333334
+      expect(unit.convert_to('km').scalar * 1000).to eq 5/6r
     end
   end
 
@@ -2026,8 +2058,12 @@ describe 'Unit Math' do
     specify { expect(RubyUnits::Unit.new('10.0').to_f).to be_kind_of(Float) }
     specify { expect { RubyUnits::Unit.new('10.0 m').to_f }.to raise_error(RuntimeError, "Cannot convert '10 m' to Float unless unitless.  Use Unit#scalar") }
 
+    specify { expect(RubyUnits::Unit.new('10.0').to_d).to be_kind_of(BigDecimal) }
+    specify { expect { RubyUnits::Unit.new('10.0 m').to_d }.to raise_error(RuntimeError, "Cannot convert '10 m' to BigDecimal unless unitless.  Use Unit#scalar") }
+
     specify { expect(RubyUnits::Unit.new('1+1i').to_c).to be_kind_of(Complex) }
-    specify { expect { RubyUnits::Unit.new('1+1i m').to_c }.to raise_error(RuntimeError, "Cannot convert '1.0+1.0i m' to Complex unless unitless.  Use Unit#scalar") }
+    specify { expect { RubyUnits::Unit.new('1+1i m').to_c }.to raise_error(RuntimeError, "Cannot convert '1+1i m' to Complex unless unitless.  Use Unit#scalar") }
+    specify { expect { RubyUnits::Unit.new('1.1+1.1i m').to_c }.to raise_error(RuntimeError, "Cannot convert '1.1+1.1i m' to Complex unless unitless.  Use Unit#scalar") }
 
     specify { expect(RubyUnits::Unit.new('3/7').to_r).to be_kind_of(Rational) }
     specify { expect { RubyUnits::Unit.new('3/7 m').to_r }.to raise_error(RuntimeError, "Cannot convert '3/7 m' to Rational unless unitless.  Use Unit#scalar") }
