@@ -101,6 +101,8 @@ describe 'RubyUnits::Unit#redefine!' do
         it 'when working in the same units (L)' do
           # We need multiple cases here to make sure no conversion pathways lead to precision loss.
           expect(RubyUnits::Unit.new('1000 L')    - RubyUnits::Unit.new('800 L')).to    eq(RubyUnits::Unit.new('200 L'))
+          expect(RubyUnits::Unit.new('1000.0 L')  - RubyUnits::Unit.new('800 L')).to    eq(RubyUnits::Unit.new('200 L'))
+          expect(RubyUnits::Unit.new('1000 L')    - RubyUnits::Unit.new('800.0 L')).to  eq(RubyUnits::Unit.new('200 L'))
           expect(RubyUnits::Unit.new(1000, 'L')   - RubyUnits::Unit.new(800, 'L')).to   eq(RubyUnits::Unit.new('200 L'))
           expect(RubyUnits::Unit.new(1000, 'L')   - RubyUnits::Unit.new(800, 'L')).to   eq(RubyUnits::Unit.new(200, 'L'))
           expect(RubyUnits::Unit.new(1000, 'L')   - RubyUnits::Unit.new(800, 'L')).to   eq(RubyUnits::Unit.new(200.0, 'L'))
@@ -177,6 +179,8 @@ describe 'RubyUnits::Unit#redefine!' do
         it 'when working in the same units (L)' do
           # We need multiple cases here to make sure no conversion pathways lead to precision loss.
           expect(RubyUnits::Unit.new('1000 L')    - RubyUnits::Unit.new('800 L')).to    eq(RubyUnits::Unit.new('200 L'))
+          expect(RubyUnits::Unit.new('1000.0 L')  - RubyUnits::Unit.new('800 L')).to    eq(RubyUnits::Unit.new('200 L'))
+          expect(RubyUnits::Unit.new('1000 L')    - RubyUnits::Unit.new('800.0 L')).to  eq(RubyUnits::Unit.new('200 L'))
           expect(RubyUnits::Unit.new(1000, 'L')   - RubyUnits::Unit.new(800, 'L')).to   eq(RubyUnits::Unit.new('200 L'))
           expect(RubyUnits::Unit.new(1000, 'L')   - RubyUnits::Unit.new(800, 'L')).to   eq(RubyUnits::Unit.new(200, 'L'))
           expect(RubyUnits::Unit.new(1000, 'L')   - RubyUnits::Unit.new(800, 'L')).to   eq(RubyUnits::Unit.new(200.0, 'L'))
