@@ -20,8 +20,8 @@ describe 'RubyUnits::Unit#redefine!' do
     end
 
     def redefinition_method
-      # return :normal # by using #redefine! as it is intended via the public API methods
-      return :direct # by directly mutating the internal definitions Hash structure
+      return :normal # by using #redefine! as it is intended via the public API methods
+      # return :direct # by directly mutating the internal definitions Hash structure
     end
 
     def test_redefinition_method_block(method_to_use, &block)
