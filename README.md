@@ -322,6 +322,34 @@ calculations. This in turn can have a negative impact on performance. The design
 of ruby-units has emphasized accuracy over speed. YMMV if you are doing a lot of
 math involving units.
 
+#### Known issues
+
+If its possible that the numeric type of the output changes depending on which
+operations have been made so far, since there is an internal cache playing a key
+role there. Running specs with this specific seed:
+
+```bash
+rspec spec --seed 29662
+```
+
+yields:
+
+```stdout
+Failures:
+
+  1) Unit Conversions between temperature scales is expected to eq (8106479329266893/4503599627370496) degR (Rational)
+     Failure/Error: specify { expect(RubyUnits::Unit.new('1 degC')).to eq(RubyUnits::Unit.new('1.8 degR')) }
+
+       expected: (8106479329266893/4503599627370496) degR (Rational)
+            got: 1 degC (Integer)
+
+       (compared using ==)
+     # ./spec/ruby_units/unit_spec.rb:1668:in `block (3 levels) in <top (required)>'
+
+Finished in 1.78 seconds (files took 0.86623 seconds to load)
+991 examples, 1 failure
+```
+
 ## License
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Folbrich%2Fruby-units.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Folbrich%2Fruby-units?ref=badge_large)
