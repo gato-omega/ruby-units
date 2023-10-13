@@ -477,7 +477,7 @@ module RubyUnits
         # options[0] is the scalar
         # options[1] is a unit string
         cached = self.class.cached.get(options[1])
-        
+
         if cached.nil?
           initialize("#{options[0]} #{options[1]}")
         else
@@ -1232,6 +1232,18 @@ module RubyUnits
     end
 
     alias to_int to_i
+
+    # Similar to #to_f but it converts the internal scalar
+    # to float (since we have a new #inspect method sensible to that)
+    def as_f
+      self.class.new(scalar: @scalar.to_f, numerator: self.numerator, denominator: self.denominator, signature: @signature)
+    end
+
+    # Similar to #to_d but it converts the internal scalar
+    # to BigDecimal (since we have a new #inspect method sensible to that)
+    def as_d
+      self.class.new(scalar: @scalar.to_d, numerator: self.numerator, denominator: self.denominator, signature: @signature)
+    end
 
     # if unitless, returns a Rational, otherwise raises an error
     # @return [Rational]

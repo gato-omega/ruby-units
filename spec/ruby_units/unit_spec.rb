@@ -1797,6 +1797,32 @@ describe 'Unit Conversions' do
   end
 end
 
+describe 'Unit Conversions (internal scalar type change, inspect)' do
+  context '#as_f' do
+    it 'converts the internal scalar type of the unit to a Float' do
+      unit = RubyUnits::Unit.new('1 mm')
+      expect(unit.inspect).to eq('1 mm (Integer)')
+
+      unit_as_float = unit.as_f
+      expect(unit_as_float.scalar).to be(1.0)
+      expect(unit_as_float.scalar).to be_a Float
+      expect(unit_as_float.inspect).to eq('1.0 mm (Float)')
+    end
+  end
+
+  context '#as_d' do
+    it 'converts the internal scalar type of the unit to a Float' do
+      unit = RubyUnits::Unit.new('1 mm')
+      expect(unit.inspect).to eq('1 mm (Integer)')
+
+      unit_as_big_decimal = unit.as_d
+      expect(unit_as_big_decimal.scalar).to eq(1.0.to_d) # we must use '==' to compare here.
+      expect(unit_as_big_decimal.scalar).to be_a BigDecimal
+      expect(unit_as_big_decimal.inspect).to eq('0.1e1 mm (BigDecimal)')
+    end
+  end
+end
+
 describe 'Unit Math' do
   context 'operators:' do
     context 'addition (+)' do
