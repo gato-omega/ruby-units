@@ -634,13 +634,20 @@ module RubyUnits
 
     alias base to_base
 
-    # Generate human readable output.
+    # We separated the "to_s" method which should be used for display
+    # from a "to_parseable_string" method which is also used internally for conversions.
+    # and other transformations between other data types.
+    def to_s(target_units = nil)
+      to_parseable_string(target_units)
+    end
+
+    # Generate human readable (but parseable) output.
     # If the name of a unit is passed, the unit will first be converted to the target unit before output.
     # some named conversions are available
     #
     # @example
-    #  unit.to_s(:ft) - outputs in feet and inches (e.g., 6'4")
-    #  unit.to_s(:lbs) - outputs in pounds and ounces (e.g, 8 lbs, 8 oz)
+    #  unit.to_parseable_string(:ft) - outputs in feet and inches (e.g., 6'4")
+    #  unit.to_parseable_string(:lbs) - outputs in pounds and ounces (e.g, 8 lbs, 8 oz)
     #
     # You can also pass a standard format string (i.e., '%0.2f')
     # or a strftime format string.
@@ -650,7 +657,7 @@ module RubyUnits
     # @note Rational scalars that are equal to an integer will be represented as integers (i.e, 6/1 => 6, 4/2 => 2, etc..)
     # @param [Symbol] target_units
     # @return [String]
-    def to_s(target_units = nil)
+    def to_parseable_string(target_units = nil)
       out = @output[target_units]
       return out if out
 
@@ -672,7 +679,7 @@ module RubyUnits
               when /(%[-+.\w#]+)\s*(.+)*/ # format string like '%0.2f in'
                 begin
                   if Regexp.last_match(2) # unit specified, need to convert
-                    convert_to(Regexp.last_match(2)).to_s(Regexp.last_match(1))
+                    convert_to(Regexp.last_match(2)).to_parseable_string(Regexp.last_match(1))
                   else
                     "#{Regexp.last_match(1) % @scalar}#{separator}#{Regexp.last_match(2) || units}".strip
                   end
@@ -680,7 +687,7 @@ module RubyUnits
                   (DateTime.new(0) + self).strftime(target_units)
                 end
               when /(\S+)/ # unit only 'mm' or '1/mm'
-                convert_to(Regexp.last_match(1)).to_s
+                convert_to(Regexp.last_match(1)).to_parseable_string
               else
                 raise 'unhandled case'
               end
@@ -1257,7 +1264,7 @@ module RubyUnits
     # Returns string formatted for json
     # @return [String]
     def as_json(*)
-      to_s
+      to_parseable_string
     end
 
     # Returns the 'unit' part of the Unit object without the scalar
@@ -1331,11 +1338,12 @@ module RubyUnits
     # Round the unit according to the rules of the scalar's class. Call this
     # with the arguments appropriate for the scalar's class (e.g., Integer,
     # Rational, etc..). Because unit conversions can often result in Rational
-    # scalars (to preserve precision), it may be advisable to use +to_s+ to
+    # scalars (to preserve precision), it may be advisable to use +to_parseable_string+ or +to_s+ to
     # format output instead of using +round+.
     # @example
     #   RubyUnits::Unit.new('21870 mm/min').convert_to('m/min').round(1) #=> 2187/100 m/min
     #   RubyUnits::Unit.new('21870 mm/min').convert_to('m/min').to_s('%0.1f') #=> 21.9 m/min
+    #   RubyUnits::Unit.new('21870 mm/min').convert_to('m/min').to_parseable_string('%0.1f') #=> 21.9 m/min
     #
     # @return [Numeric,Unit]
     def round(*args, **kwargs)

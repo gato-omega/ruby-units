@@ -19,7 +19,7 @@ module RubyUnits
     # @return [String]
     def %(*other)
       if other.first.is_a?(RubyUnits::Unit)
-        other.first.to_s(self)
+        other.first.to_parseable_string(self)
       else
         super
       end
