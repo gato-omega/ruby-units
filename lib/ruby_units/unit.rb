@@ -1147,6 +1147,7 @@ module RubyUnits
       return self if other.nil?
       return self if TrueClass === other
       return self if FalseClass === other
+      return self if unitless? && other === ''
 
       if (other.is_a?(Unit) && other.temperature?) || (other.is_a?(String) && other =~ self.class.temp_regex)
         raise ArgumentError, 'Receiver is not a temperature unit' unless degree?
