@@ -847,7 +847,7 @@ module RubyUnits
     # @raise [ArgumentError] when two temperatures are added
     # @raise [ArgumentError] when units are not compatible
     # @raise [ArgumentError] when adding a fixed time or date to a time span
-    def +(other)
+    def add(other)
       case other
       when Unit
         if zero?
@@ -877,13 +877,17 @@ module RubyUnits
       end
     end
 
+    def +(other)
+      add(other)
+    end
+
     # Subtract two units. Result is same units as receiver and scalar and base_scalar are updated appropriately
     # @param [Numeric] other
     # @return [Unit]
     # @raise [ArgumentError] when subtracting a temperature from a degree
     # @raise [ArgumentError] when units are not compatible
     # @raise [ArgumentError] when subtracting a fixed time from a time span
-    def -(other)
+    def substract(other)
       case other
       when Unit
         if zero?
@@ -915,11 +919,15 @@ module RubyUnits
       end
     end
 
+    def -(other)
+      substract(other)
+    end
+
     # Multiply two units.
     # @param [Numeric] other
     # @return [Unit]
     # @raise [ArgumentError] when attempting to multiply two temperatures
-    def *(other)
+    def multiply(other)
       case other
       when Unit
         raise ArgumentError, 'Cannot multiply by temperatures' if [other, self].any?(&:temperature?)
@@ -935,13 +943,17 @@ module RubyUnits
       end
     end
 
+    def *(other)
+      multiply(other)
+    end
+
     # Divide two units.
     # Throws an exception if divisor is 0
     # @param [Numeric] other
     # @return [Unit]
     # @raise [ZeroDivisionError] if divisor is zero
     # @raise [ArgumentError] if attempting to divide a temperature by another temperature
-    def /(other)
+    def divide(other)
       case other
       when Unit
         raise ZeroDivisionError if other.zero?
@@ -962,6 +974,10 @@ module RubyUnits
         x, y = coerce(other)
         y / x
       end
+    end
+
+    def /(other)
+      divide(other)
     end
 
     # Returns the remainder when one unit is divided by another
