@@ -1259,13 +1259,17 @@ module RubyUnits
 
     # Similar to #to_f but it converts the internal scalar
     # to float (since we have a new #inspect method sensible to that)
+    # return self if already using an internal Float representantion
     def as_f
+      return self if @scalar.is_a?(Float)
       self.class.new(scalar: @scalar.to_f, numerator: self.numerator, denominator: self.denominator, signature: @signature)
     end
 
     # Similar to #to_d but it converts the internal scalar
     # to BigDecimal (since we have a new #inspect method sensible to that)
+    # return self if already using an internal BigDecimal representantion
     def as_d
+      return self if @scalar.is_a?(BigDecimal)
       self.class.new(scalar: @scalar.to_d, numerator: self.numerator, denominator: self.denominator, signature: @signature)
     end
 

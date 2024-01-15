@@ -1808,6 +1808,17 @@ describe 'Unit Conversions (internal scalar type change, inspect)' do
       expect(unit_as_float.scalar).to be_a Float
       expect(unit_as_float.inspect).to eq('1.0 mm (Float)')
     end
+
+    it 'avoids recomputing a new unit by returning `self` if the internal scalary type is already a Float' do
+      unit = RubyUnits::Unit.new('1.1 mm')
+      expect(unit.inspect).to eq('1.1 mm (Float)')
+
+      unit_as_float = unit.as_f
+      expect(unit_as_float).to be(unit)
+      expect(unit_as_float.scalar).to be(1.1)
+      expect(unit_as_float.scalar).to be_a Float
+      expect(unit_as_float.inspect).to eq('1.1 mm (Float)')
+    end
   end
 
   context '#as_d' do
@@ -1819,6 +1830,20 @@ describe 'Unit Conversions (internal scalar type change, inspect)' do
       expect(unit_as_big_decimal.scalar).to eq(1.0.to_d) # we must use '==' to compare here.
       expect(unit_as_big_decimal.scalar).to be_a BigDecimal
       expect(unit_as_big_decimal.inspect).to eq('0.1e1 mm (BigDecimal)')
+    end
+
+    # This won't work since we instantiate a unit from scratch
+    # when we do #as_d, which creates it by default as a Float, thus
+    # losing the type conversion
+    it 'avoids recomputing a new unit by returning `self` if the internal scalary type is already a BigDecimal' do
+      unit = RubyUnits::Unit.new(1.1.to_d, 'mm')
+      expect(unit.inspect).to eq('0.11e1 mm (BigDecimal)')
+
+      unit_as_big_decimal = unit.as_d
+      expect(unit_as_big_decimal).to be(unit)
+      expect(unit_as_big_decimal.scalar).to eq(1.1.to_d)
+      expect(unit_as_big_decimal.scalar).to be_a BigDecimal
+      expect(unit_as_big_decimal.inspect).to eq('0.11e1 mm (BigDecimal)')
     end
   end
 end
