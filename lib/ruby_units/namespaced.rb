@@ -2,6 +2,7 @@
 require_relative 'version'
 require_relative 'configuration'
 require_relative 'definition'
+require_relative 'errors'
 require_relative 'cache'
 require_relative 'array'
 require_relative 'date'

@@ -867,7 +867,7 @@ module RubyUnits
             self.class.new(scalar: (base_scalar + other.base_scalar), numerator: base.numerator, denominator: base.denominator, signature: @signature).convert_to(self)
           end
         else
-          raise ArgumentError, "Incompatible Units ('#{self}' not compatible with '#{other}')"
+          raise IncompatibleUnitsError, "Incompatible Units ('#{self}' not compatible with '#{other}')"
         end
       when Date, Time
         raise ArgumentError, 'Date and Time objects represent fixed points in time and cannot be added to a Unit'
@@ -909,7 +909,7 @@ module RubyUnits
             self.class.new(scalar: (base_scalar - other.base_scalar), numerator: base.numerator, denominator: base.denominator, signature: @signature).convert_to(self)
           end
         else
-          raise ArgumentError, "Incompatible Units ('#{self}' not compatible with '#{other}')"
+          raise IncompatibleUnitsError, "Incompatible Units ('#{self}' not compatible with '#{other}')"
         end
       when Time
         raise ArgumentError, 'Date and Time objects represent fixed points in time and cannot be subtracted from a Unit'
@@ -986,7 +986,7 @@ module RubyUnits
     # @return [Unit]
     # @raise [ArgumentError] if units are not compatible
     def remainder(other)
-      raise ArgumentError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless compatible_with?(other)
+      raise IncompatibleUnitsError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless compatible_with?(other)
 
       self.class.new(base_scalar.remainder(other.to_unit.base_scalar), to_base.units).convert_to(self)
     end
@@ -997,7 +997,7 @@ module RubyUnits
     # @return [Array(Integer, Unit)]
     # @raise [ArgumentError] if units are not compatible
     def divmod(other)
-      raise ArgumentError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless compatible_with?(other)
+      raise IncompatibleUnitsError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless compatible_with?(other)
 
       [quo(other).to_base.floor, self % other]
     end
@@ -1008,7 +1008,7 @@ module RubyUnits
     # @return [Integer]
     # @raise [ArgumentError] if units are not compatible
     def %(other)
-      raise ArgumentError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless compatible_with?(other)
+      raise IncompatibleUnitsError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless compatible_with?(other)
 
       self.class.new(base_scalar % other.to_unit.base_scalar, to_base.units).convert_to(self)
     end
@@ -1199,7 +1199,7 @@ module RubyUnits
                  end
         return self if target.units == units
 
-        raise ArgumentError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless self =~ target
+        raise IncompatibleUnitsError, "Incompatible Units ('#{self}' not compatible with '#{other}')" unless self =~ target
 
         numerator1   = @numerator.map { self.class.prefix_values[_1] || _1 }.map { _1.is_a?(Numeric) ? _1 : self.class.unit_values[_1][:scalar] }.compact
         denominator1 = @denominator.map { self.class.prefix_values[_1] || _1 }.map { _1.is_a?(Numeric) ? _1 : self.class.unit_values[_1][:scalar] }.compact

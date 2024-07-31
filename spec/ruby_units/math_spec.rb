@@ -70,7 +70,7 @@ RSpec.describe RubyUnits::Math do
           RubyUnits::Unit.new('1 m'),
           RubyUnits::Unit.new('2 lbs')
         )
-      end.to raise_error(ArgumentError)
+      end.to raise_error(RubyUnits::IncompatibleUnitsError)
     end
 
     specify do

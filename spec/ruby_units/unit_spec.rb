@@ -1632,7 +1632,7 @@ describe 'Unit Conversions' do
   end
 
   context 'between incompatible units' do
-    specify { expect { RubyUnits::Unit.new('1 s').convert_to('m') }.to raise_error(ArgumentError, "Incompatible Units ('1 s' not compatible with 'm')") }
+    specify { expect { RubyUnits::Unit.new('1 s').convert_to('m') }.to raise_error(RubyUnits::IncompatibleUnitsError, "Incompatible Units ('1 s' not compatible with 'm')") }
   end
 
   context 'given bad input' do
@@ -1862,14 +1862,14 @@ describe 'Unit Math' do
       end
 
       context 'between incompatible units' do
-        specify { expect { RubyUnits::Unit.new('10 kg') + RubyUnits::Unit.new('10 m') }.to raise_error(ArgumentError) }
-        specify { expect { RubyUnits::Unit.new('10 m') + RubyUnits::Unit.new('10 kg') }.to raise_error(ArgumentError) }
+        specify { expect { RubyUnits::Unit.new('10 kg') + RubyUnits::Unit.new('10 m') }.to raise_error(RubyUnits::IncompatibleUnitsError) }
+        specify { expect { RubyUnits::Unit.new('10 m') + RubyUnits::Unit.new('10 kg') }.to raise_error(RubyUnits::IncompatibleUnitsError) }
         specify { expect { RubyUnits::Unit.new('10 m') + nil }.to raise_error(ArgumentError) }
       end
 
       context 'a number from a unit' do
-        specify { expect { RubyUnits::Unit.new('10 kg') + 1 }.to raise_error(ArgumentError) }
-        specify { expect { 10 + RubyUnits::Unit.new('10 kg') }.to raise_error(ArgumentError) }
+        specify { expect { RubyUnits::Unit.new('10 kg') + 1 }.to raise_error(RubyUnits::IncompatibleUnitsError) }
+        specify { expect { 10 + RubyUnits::Unit.new('10 kg') }.to raise_error(RubyUnits::IncompatibleUnitsError) }
       end
 
       context 'between a unit and coerceable types' do
@@ -1906,8 +1906,8 @@ describe 'Unit Math' do
       end
 
       context 'incompatible units' do
-        specify { expect { RubyUnits::Unit.new('10 kg') - RubyUnits::Unit.new('10 m') }.to raise_error(ArgumentError) }
-        specify { expect { RubyUnits::Unit.new('10 m') - RubyUnits::Unit.new('10 kg') }.to raise_error(ArgumentError) }
+        specify { expect { RubyUnits::Unit.new('10 kg') - RubyUnits::Unit.new('10 m') }.to raise_error(RubyUnits::IncompatibleUnitsError) }
+        specify { expect { RubyUnits::Unit.new('10 m') - RubyUnits::Unit.new('10 kg') }.to raise_error(RubyUnits::IncompatibleUnitsError) }
         specify { expect { RubyUnits::Unit.new('10 m') - nil }.to raise_error(ArgumentError) }
       end
 
@@ -1917,8 +1917,8 @@ describe 'Unit Math' do
       end
 
       context 'a number from a unit' do
-        specify { expect { RubyUnits::Unit.new('10 kg') - 1 }.to raise_error(ArgumentError) }
-        specify { expect { 10 - RubyUnits::Unit.new('10 kg') }.to raise_error(ArgumentError) }
+        specify { expect { RubyUnits::Unit.new('10 kg') - 1 }.to raise_error(RubyUnits::IncompatibleUnitsError) }
+        specify { expect { 10 - RubyUnits::Unit.new('10 kg') }.to raise_error(RubyUnits::IncompatibleUnitsError) }
       end
 
       context 'between two temperatures' do
@@ -2041,7 +2041,7 @@ describe 'Unit Math' do
       it { expect(RubyUnits::Unit.new(127) % -2).to eq(-1) }
 
       it 'raises and exception with incompatible units' do
-        expect { RubyUnits::Unit.new('1 m') % RubyUnits::Unit.new('1 kg') }.to raise_error(ArgumentError, "Incompatible Units ('1 m' not compatible with '1 kg')")
+        expect { RubyUnits::Unit.new('1 m') % RubyUnits::Unit.new('1 kg') }.to raise_error(RubyUnits::IncompatibleUnitsError, "Incompatible Units ('1 m' not compatible with '1 kg')")
       end
     end
 
@@ -2250,8 +2250,8 @@ describe 'Unit Math' do
   end
 
   describe '#remainder' do
-    it { expect { RubyUnits::Unit.new('5 mm').remainder(2) }.to raise_error(ArgumentError, "Incompatible Units ('5 mm' not compatible with '2')") }
-    it { expect { RubyUnits::Unit.new('5 mm').remainder(RubyUnits::Unit.new('2 kg')) }.to raise_error(ArgumentError, "Incompatible Units ('5 mm' not compatible with '2 kg')") }
+    it { expect { RubyUnits::Unit.new('5 mm').remainder(2) }.to raise_error(RubyUnits::IncompatibleUnitsError, "Incompatible Units ('5 mm' not compatible with '2')") }
+    it { expect { RubyUnits::Unit.new('5 mm').remainder(RubyUnits::Unit.new('2 kg')) }.to raise_error(RubyUnits::IncompatibleUnitsError, "Incompatible Units ('5 mm' not compatible with '2 kg')") }
     it { expect(RubyUnits::Unit.new('5 mm').remainder(RubyUnits::Unit.new('2 mm'))).to eq(RubyUnits::Unit.new('1 mm')) }
     it { expect(RubyUnits::Unit.new('5 mm').remainder(RubyUnits::Unit.new('-2 mm'))).to eq(RubyUnits::Unit.new('1 mm')) }
     it { expect(RubyUnits::Unit.new('5 cm').remainder(RubyUnits::Unit.new('1 in'))).to eq(RubyUnits::Unit.new('2.46 cm')) }
@@ -2263,7 +2263,7 @@ describe 'Unit Math' do
     it { expect(RubyUnits::Unit.new('5 mm').divmod(RubyUnits::Unit.new('2 mm'))).to eq([2, RubyUnits::Unit.new('1 mm')]) }
     it { expect(RubyUnits::Unit.new('5 mm').divmod(RubyUnits::Unit.new('-2 mm'))).to eq([-3, RubyUnits::Unit.new('-1 mm')]) }
     it { expect(RubyUnits::Unit.new('1 km').divmod(RubyUnits::Unit.new('2 m'))).to eq([500, RubyUnits::Unit.new('0 mm')]) }
-    it { expect { RubyUnits::Unit.new('1 m').divmod(RubyUnits::Unit.new('2 kg')) }.to raise_error(ArgumentError, "Incompatible Units ('1 m' not compatible with '2 kg')") }
+    it { expect { RubyUnits::Unit.new('1 m').divmod(RubyUnits::Unit.new('2 kg')) }.to raise_error(RubyUnits::IncompatibleUnitsError, "Incompatible Units ('1 m' not compatible with '2 kg')") }
   end
 
   describe '#quo' do
